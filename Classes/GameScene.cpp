@@ -42,11 +42,19 @@ bool GameScene::init()
 
 	loadMyAnimationsAndSprite();
 
-	player->setPosition(Vec2(visibleSize.width / 2 + origin.x - 120, visibleSize.height / 2 + origin.y));
+	player->setPosition(Vec2(leftWall->getContentSize().width + player->getContentSize().width / 2, visibleSize.height / 2 + origin.y));
 	this->addChild(player, 1);
 
 	player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtLeft")));
 	loadMyMusic();
+
+	// 一次只能播放一个动画
+	mutex = false;
+
+	position = false;
+
+	// 添加监听器
+	addTouchListener();
 	return true;
 }
 
@@ -66,8 +74,10 @@ void GameScene::loadMyAnimationsAndSprite()
 
 	def.filePath = "images/move.gif";
 	def.loops = 1;
+	def.delayPerUnit = 0.05f;
 	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "Move");
 	def.loops = -1;
+	def.delayPerUnit = 0.1f;
 
 	//加载骑士和骑士冲锋动画
 	def.filePath = "images/cavalry_left.gif";
@@ -100,4 +110,48 @@ void GameScene::loadMyMusic()
 	
 	audio->preloadBackgroundMusic("sounds/background.mp3");
 	audio->playBackgroundMusic("sounds/background.mp3", true);
+}
+
+// 添加触摸事件监听器
+void GameScene::addTouchListener() {
+	// Todo
+
+	//事件分发器
+	auto dispatcher = Director::getInstance()->getEventDispatcher();
+
+	//创建单点触摸监听器
+	auto touchListener = EventListenerTouchOneByOne::create();
+	touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+	touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+
+	dispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+}
+
+bool GameScene::onTouchBegan(Touch *touch, Event *event) {
+	if (!mutex) {
+		mutex = true;
+		player->getActionManager()->removeAllActions();
+		//播放动作时候的动画
+		Size visibleSize = Director::getInstance()->getVisibleSize();
+		auto playerMove = MoveTo::create(0.5, Vec2(visibleSize.width - player->getPosition().x, player->getPosition().y));
+		Animate* move = Animate::create(AnimationCache::getInstance()->getAnimation("Move"));
+		auto set = CallFunc::create(([this]() {
+			player->getActionManager()->removeAllActions();
+			position = !position;
+			if(position)
+				player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtRight")));
+			else 
+				player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtLeft")));
+			mutex = false;
+		}));
+		//当播放完动画以后才设置mutex的值
+		Spawn* spawn = Spawn::create(move, playerMove, NULL);
+		Sequence* seq = Sequence::create(spawn, set, NULL);
+		player->runAction(seq);
+	}
+	return true;
+}
+
+void GameScene::onTouchEnded(Touch *touch, Event *event) {
+
 }

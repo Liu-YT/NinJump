@@ -11,6 +11,16 @@ public:
 
 	virtual bool init();
 
+	void loadMyAnimationsAndSprite();
+
+	void loadMyMusic();
+
+	void addTouchListener();
+
+	bool onTouchBegan(Touch * touch, Event * event);
+
+	void onTouchEnded(Touch * touch, Event * event);
+
 	CREATE_FUNC(GameScene);
 
 private:
@@ -18,8 +28,7 @@ private:
 	cocos2d::Sprite* player;
 	cocos2d::Sprite* cavalry;
 	cocos2d::Sprite* fox;
-
-	void loadMyAnimationsAndSprite();
-	void loadMyMusic();
-
+	//控制 一次只能播放一个动画
+	bool mutex;
+	bool position;
 };
