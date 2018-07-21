@@ -20,7 +20,6 @@ bool HelpScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
 	auto bg = Sprite::create("images/newBg.jpg");
 	bg->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	bg->setScale(visibleSize.width / bg->getContentSize().width,
@@ -39,7 +38,7 @@ bool HelpScene::init()
 		float x = origin.x + visibleSize.width / 2;
 		float y = origin.y + backButton->getContentSize().height / 2 + 10;
 		backButton->setPosition(Vec2(x, y));
-		backButton->setColor(Color3B(0, 255, 0));
+		backButton->setColor(Color3B(255, 0, 0));
 	}
 	auto menu = Menu::create(backButton, NULL);
 	menu->setPosition(Vec2::ZERO);

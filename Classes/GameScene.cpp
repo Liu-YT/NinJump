@@ -31,18 +31,20 @@ bool GameScene::init()
 	this->addChild(bg, 0);
 	
 	auto leftWall = Sprite::create("images/left_wall.jpg");
-	leftWall->setPosition(Vec2(leftWall->getContentSize().width / 2, visibleSize.height / 2));
+	leftWall->setPosition(Vec2(leftWall->getContentSize().width * 0.6 / 2, visibleSize.height / 2));
 	leftWall->setScaleY(visibleSize.height / leftWall->getContentSize().height);
+	leftWall->setScaleX(0.6);
 	this->addChild(leftWall, 0);
 
 	auto rightWall = Sprite::create("images/right_wall.jpg");
-	rightWall->setPosition(Vec2(visibleSize.width - rightWall->getContentSize().width / 2, visibleSize.height / 2));
+	rightWall->setPosition(Vec2(visibleSize.width - rightWall->getContentSize().width * 0.6 / 2, visibleSize.height / 2));
 	rightWall->setScaleY(visibleSize.height / rightWall->getContentSize().height);
+	rightWall->setScaleX(0.6);
 	this->addChild(rightWall, 0);
 
 	loadMyAnimationsAndSprite();
 
-	player->setPosition(Vec2(leftWall->getContentSize().width + player->getContentSize().width / 2, visibleSize.height / 2 + origin.y));
+	player->setPosition(Vec2(leftWall->getContentSize().width * 0.6 + player->getContentSize().width / 2, visibleSize.height * 0.6 / 2 + origin.y));
 	this->addChild(player, 1);
 
 	player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtLeft")));
@@ -55,6 +57,7 @@ bool GameScene::init()
 
 	// Ìí¼Ó¼àÌıÆ÷
 	addTouchListener();
+
 	return true;
 }
 
