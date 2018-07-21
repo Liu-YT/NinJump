@@ -21,6 +21,8 @@ public:
 
 	void onTouchEnded(Touch * touch, Event * event);
 
+	void attackPlayer(float f);
+
 	CREATE_FUNC(GameScene);
 
 private:
@@ -31,4 +33,5 @@ private:
 	//控制 一次只能播放一个动画
 	bool mutex;
 	bool position;
+	bool attack;
 };

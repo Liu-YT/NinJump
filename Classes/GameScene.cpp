@@ -52,11 +52,14 @@ bool GameScene::init()
 
 	// 一次只能播放一个动画
 	mutex = false;
-
+	attack = false;
 	position = false;
 
 	// 添加监听器
 	addTouchListener();
+
+	// 调度器
+	schedule(schedule_selector(GameScene::attackPlayer), 1.0f, kRepeatForever, 0);
 
 	return true;
 }
@@ -100,6 +103,7 @@ void GameScene::loadMyAnimationsAndSprite()
 
 	//加载鸟和鸟飞行动画
 	def.filePath = "images/bird_left.gif";
+	def.loops = 1;
 	fox = Sprite::createWithTexture(GifAnimation::getInstance()->getFristTexture(def.filePath));
 	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "BirdLeft");
 
@@ -157,4 +161,31 @@ bool GameScene::onTouchBegan(Touch *touch, Event *event) {
 
 void GameScene::onTouchEnded(Touch *touch, Event *event) {
 
+}
+
+void GameScene::attackPlayer(float f) {
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	if (!attack) {
+		attack = true;
+		Sprite* bird;
+		Animate* birdAnimate;
+		if (!position) {
+			// left
+			bird = Sprite::create("images/bird_l.png");
+			bird->setScale(0.8);
+			bird->setPosition(visibleSize.width * 3 / 4, visibleSize.height * 3 / 4);
+			birdAnimate = Animate::create(AnimationCache::getInstance()->getAnimation("BirdLeft"));
+		} 
+		else {
+			// right
+			bird = Sprite::create("images/bird_r.png");
+			bird->setPosition(visibleSize.width * 1 / 4, visibleSize.height * 1 / 4);
+			birdAnimate = Animate::create(AnimationCache::getInstance()->getAnimation("BirdRight"));
+		}
+		this->addChild(bird, 1);
+		auto move = MoveTo::create(0.8, player->getPosition());
+		Spawn* birdSpawn = Spawn::create(birdAnimate, move, NULL);
+		Sequence* birdSeq = Sequence::create(birdAnimate, birdSpawn, NULL);
+		bird->runAction(birdSeq);
+	}
 }
