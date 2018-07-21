@@ -42,24 +42,30 @@ bool GameScene::init()
 	rightWall->setScaleX(0.6);
 	this->addChild(rightWall, 0);
 
+	wallWidth = leftWall->getContentSize().width * 0.6 / 2;
+
 	loadMyAnimationsAndSprite();
 
 	player->setPosition(Vec2(leftWall->getContentSize().width * 0.6 + player->getContentSize().width / 2, visibleSize.height * 0.6 / 2 + origin.y));
-	this->addChild(player, 1);
+	this->addChild(player, 1, 1);
 
 	player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtLeft")));
 	loadMyMusic();
 
 	// 一次只能播放一个动画
 	mutex = false;
+
+	// 地图上是否已经存在攻击者
 	attack = false;
+
+	// 玩家位置
 	position = false;
 
 	// 添加监听器
 	addTouchListener();
 
 	// 调度器
-	schedule(schedule_selector(GameScene::attackPlayer), 1.0f, kRepeatForever, 0);
+	schedule(schedule_selector(GameScene::attackPlayer), 0.5f, kRepeatForever, 0);
 
 	return true;
 }
@@ -137,13 +143,25 @@ void GameScene::addTouchListener() {
 bool GameScene::onTouchBegan(Touch *touch, Event *event) {
 	if (!mutex) {
 		mutex = true;
-		player->getActionManager()->removeAllActions();
 		//播放动作时候的动画
+		player->getActionManager()->removeAllActionsFromTarget(this->getChildByTag(1));
 		Size visibleSize = Director::getInstance()->getVisibleSize();
-		auto playerMove = MoveTo::create(0.5, Vec2(visibleSize.width - player->getPosition().x, player->getPosition().y));
-		Animate* move = Animate::create(AnimationCache::getInstance()->getAnimation("Move"));
+		float moveX = -1.0f * (2 * player->getPosition().x - visibleSize.width);
+		float backX = player->getPosition().x;
+		float backY = player->getPosition().y;
+
+		auto playerMove0 = MoveTo::create(0.1, Vec2(backX + moveX * 1 / 8, backY + 12.0f));
+		auto playerMove1 = MoveTo::create(0.1, Vec2(backX + moveX * 2 / 8, backY + 20.0f));
+		auto playerMove2 = MoveTo::create(0.1, Vec2(backX + moveX * 3 / 8, backY + 27.0f));
+		auto playerMove3 = MoveTo::create(0.1, Vec2(backX + moveX * 4 / 8, backY + 31.5f));
+		auto playerMove4 = MoveTo::create(0.1, Vec2(backX + moveX * 5 / 8, backY + 27.0f));
+		auto playerMove5 = MoveTo::create(0.1, Vec2(backX + moveX * 6 / 8, backY + 20.0f));
+		auto playerMove6 = MoveTo::create(0.1, Vec2(backX + moveX * 7 / 8, backY + 12.0f));
+		auto playerMove7 = MoveTo::create(0.1, Vec2(backX + moveX * 8 / 8, backY + 0.0f));
+
+		
+		Animate* moveAnimate = Animate::create(AnimationCache::getInstance()->getAnimation("Move"));
 		auto set = CallFunc::create(([this]() {
-			player->getActionManager()->removeAllActions();
 			position = !position;
 			if(position)
 				player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtRight")));
@@ -152,7 +170,9 @@ bool GameScene::onTouchBegan(Touch *touch, Event *event) {
 			mutex = false;
 		}));
 		//当播放完动画以后才设置mutex的值
-		Spawn* spawn = Spawn::create(move, playerMove, NULL);
+		Sequence* moveSeq = Sequence::create(playerMove0, playerMove1, playerMove2, playerMove3, playerMove4, playerMove5, playerMove6, playerMove7, NULL);
+
+		Spawn* spawn = Spawn::create(moveAnimate, moveSeq, NULL);
 		Sequence* seq = Sequence::create(spawn, set, NULL);
 		player->runAction(seq);
 	}
@@ -179,12 +199,16 @@ void GameScene::attackPlayer(float f) {
 		else {
 			// right
 			bird = Sprite::create("images/bird_r.png");
-			bird->setPosition(visibleSize.width * 1 / 4, visibleSize.height * 1 / 4);
+			bird->setScale(0.8);
+			bird->setPosition(visibleSize.width * 1 / 4, visibleSize.height * 3 / 4);
 			birdAnimate = Animate::create(AnimationCache::getInstance()->getAnimation("BirdRight"));
 		}
 		this->addChild(bird, 1);
+		auto set = CallFunc::create(([this]() {
+			attack = false;
+		}));
 		auto move = MoveTo::create(0.8, player->getPosition());
-		Spawn* birdSpawn = Spawn::create(birdAnimate, move, NULL);
+		Spawn* birdSpawn = Spawn::create(birdAnimate, move, set, NULL);
 		Sequence* birdSeq = Sequence::create(birdAnimate, birdSpawn, NULL);
 		bird->runAction(birdSeq);
 	}

@@ -34,4 +34,6 @@ private:
 	bool mutex;
 	bool position;
 	bool attack;
+
+	float wallWidth;
 };
