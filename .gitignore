@@ -1,0 +1,10 @@
+proj.win32/
+cocos2d/
+*.json
+*.txt
+*.doc
+*.xlsx
+*.pdf
+*.code-workspace
+*.zip
+*.rar
