@@ -1,6 +1,10 @@
 #include "GameScene.h"
+#include "GifAnimation.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+
+using namespace CocosDenshion;
 
 Scene* GameScene::createScene()
 {
@@ -20,13 +24,80 @@ bool GameScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto bg = Sprite::create("images/background.jpg");
+	auto bg = Sprite::create("images/newBg.jpg");
 	bg->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	bg->setScale(visibleSize.width / bg->getContentSize().width,
 		visibleSize.height / bg->getContentSize().height);
 	this->addChild(bg, 0);
+	
+	auto leftWall = Sprite::create("images/left_wall.jpg");
+	leftWall->setPosition(Vec2(leftWall->getContentSize().width / 2, visibleSize.height / 2));
+	leftWall->setScaleY(visibleSize.height / leftWall->getContentSize().height);
+	this->addChild(leftWall, 0);
 
+	auto rightWall = Sprite::create("images/right_wall.jpg");
+	rightWall->setPosition(Vec2(visibleSize.width - rightWall->getContentSize().width / 2, visibleSize.height / 2));
+	rightWall->setScaleY(visibleSize.height / rightWall->getContentSize().height);
+	this->addChild(rightWall, 0);
 
+	loadMyAnimationsAndSprite();
 
+	player->setPosition(Vec2(visibleSize.width / 2 + origin.x - 120, visibleSize.height / 2 + origin.y));
+	this->addChild(player, 1);
+
+	player->runAction(Animate::create(AnimationCache::getInstance()->getAnimation("RunAtLeft")));
+	loadMyMusic();
 	return true;
+}
+
+void GameScene::loadMyAnimationsAndSprite()
+{
+	GifAnimationDef def;
+	def.loops = -1;						  // 循环次数
+	def.delayPerUnit = 0.1f;			  // 每帧间隔
+	def.restoreOriginalFrame = false;	  // 还原初始状态
+
+	def.filePath = "images/left_run.gif"; // 文件路径
+	player = Sprite::createWithTexture(GifAnimation::getInstance()->getFristTexture(def.filePath));
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "RunAtLeft");
+
+	def.filePath = "images/right_run.gif";
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "RunAtRight");
+
+	def.filePath = "images/move.gif";
+	def.loops = 1;
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "Move");
+	def.loops = -1;
+
+	//加载骑士和骑士冲锋动画
+	def.filePath = "images/cavalry_left.gif";
+	cavalry = Sprite::createWithTexture(GifAnimation::getInstance()->getFristTexture(def.filePath));
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "CavalryLeft");
+
+	def.filePath = "images/cavalry_right.gif";
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "CavalryRight");
+
+	//加载狐狸和狐狸冲锋动画
+	def.filePath = "images/fox_left.gif";
+	cavalry = Sprite::createWithTexture(GifAnimation::getInstance()->getFristTexture(def.filePath));
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "FoxLeft");
+
+	def.filePath = "images/fox_right.gif";
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "FoxRight");
+
+	//加载鸟和鸟飞行动画
+	def.filePath = "images/bird_left.gif";
+	fox = Sprite::createWithTexture(GifAnimation::getInstance()->getFristTexture(def.filePath));
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "BirdLeft");
+
+	def.filePath = "images/bird_right.gif";
+	AnimationCache::getInstance()->addAnimation(GifAnimation::getInstance()->createAnimation(def), "BirdRight");
+}
+
+void GameScene::loadMyMusic()
+{
+	auto audio = SimpleAudioEngine::getInstance();
+	
+	audio->preloadBackgroundMusic("sounds/background.mp3");
+	audio->playBackgroundMusic("sounds/background.mp3", true);
 }
