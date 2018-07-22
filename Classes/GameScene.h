@@ -13,7 +13,7 @@ class GameScene : public cocos2d::Scene
 public:
 	static cocos2d::Scene* createScene();
 	static PhysicsWorld* world;
-	void setPhysicsWorld(PhysicsWorld * world);
+	void setPhysicsWorld(PhysicsWorld * world); 
 
 	virtual bool init();
 
@@ -32,7 +32,7 @@ public:
 	bool onTouchBegan(Touch * touch, Event * event);
 
 	void onTouchEnded(Touch * touch, Event * event);
-
+	 
 	bool onConcactBegin(PhysicsContact & contact);
 
 	void birdAttackPlayer();

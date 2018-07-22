@@ -2,8 +2,11 @@
 #include "SimpleAudioEngine.h"
 #include "GameScene.h"
 #include "HelpScene.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+
+using namespace CocosDenshion;
 
 Scene* MenuScene::createScene()
 {
@@ -36,6 +39,11 @@ bool MenuScene::init()
 	bg->setScale(visibleSize.width / bg->getContentSize().width,
 		visibleSize.height / bg->getContentSize().height);
 	this->addChild(bg, 0);
+
+	// bgmusic
+	auto audio = SimpleAudioEngine::getInstance();
+	audio->preloadBackgroundMusic("sounds/home.wav");
+	audio->playBackgroundMusic("sounds/home.wav", true);
 
 	//player
 	auto player = Sprite::create("images/left_ninjia.png");
@@ -77,6 +85,7 @@ bool MenuScene::init()
 void MenuScene::start(Ref* pSender) {
 	auto gameScene = GameScene::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(0.5, gameScene, Color3B(255,255,255)));
+	// SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 }
 
 void MenuScene::help(Ref* pSender) {

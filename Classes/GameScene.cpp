@@ -268,7 +268,7 @@ void GameScene::generateRoofs(float dt) {
 }
 
 void GameScene::generateAttacker(float dt) {
-	int num = random(1, 2);
+	int num = random(0, 3);
 	if (num == 1 || num == 2) {
 		birdAttackPlayer();
 	}
@@ -427,7 +427,7 @@ bool GameScene::onConcactBegin(PhysicsContact & contact) {
 				score += 100;
 				nodeB->removeFromParentAndCleanup(true);
 			}
-			else
+			else if(!invincible)
 				gameOver();
 		}
 	}
@@ -443,7 +443,7 @@ bool GameScene::onConcactBegin(PhysicsContact & contact) {
 				score += 100;
 				nodeA->removeFromParentAndCleanup(true);
 			}
-			else
+			else if (!invincible)
 				gameOver();
 		}
 	}
