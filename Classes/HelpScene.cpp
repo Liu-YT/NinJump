@@ -26,10 +26,30 @@ bool HelpScene::init()
 		visibleSize.height / bg->getContentSize().height);
 	this->addChild(bg, 0);
 
-	auto text = Label::createWithTTF("Player Guide", "fonts/arial.TTF", 40);
+	auto text = Label::createWithTTF("Play Guide", "fonts/arial.TTF", 40);
 	text->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - text->getContentSize().height));
 	text->setColor(Color3B(0, 0, 0));
 	this->addChild(text, 1);
+
+	auto first = Label::createWithTTF("1. You can kill the bird when you click and \n   the player attacks the bird, then you'll\n get 100 score.", "fonts/STXINWEI.TTF", 20);
+	first->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 140));
+	first->setColor(Color3B(0, 0, 0));
+	this->addChild(first, 1);
+
+	auto second = Label::createWithTTF("2. When you kill 3 birds, you get 5 seconds \n   of invincible time.", "fonts/STXINWEI.TTF", 20);
+	second->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 210));
+	second->setColor(Color3B(0, 0, 0));
+	this->addChild(second, 1);
+
+	auto third = Label::createWithTTF("3. When you collide a cavalry or a roof, you \n will die.", "fonts/STXINWEI.TTF", 20);
+	third->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 280));
+	third->setColor(Color3B(0, 0, 0));
+	this->addChild(third, 1);
+
+	auto fourth = Label::createWithTTF("4. In database, We will store your best score. \n", "fonts/STXINWEI.TTF", 20);
+	fourth->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 350));
+	fourth->setColor(Color3B(0, 0, 0));
+	this->addChild(fourth, 1);
 
 	auto backButton = MenuItemFont::create("Back", [](Ref* pSender) {
 		Director::getInstance()->popScene();
